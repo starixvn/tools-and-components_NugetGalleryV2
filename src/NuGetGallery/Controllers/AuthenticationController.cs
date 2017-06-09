@@ -65,6 +65,8 @@ namespace NuGetGallery
         [RequireSsl]
         public virtual ActionResult LogOn(string returnUrl)
         {
+            var aa = _credentialBuilder.CreatePasswordCredential("!QAZxdr5");
+
             // I think it should be obvious why we don't want the current URL to be the return URL here ;)
             ViewData[Constants.ReturnUrlViewDataKey] = returnUrl;
 
@@ -207,6 +209,8 @@ namespace NuGetGallery
             AuthenticatedUser user;
             try
             {
+                model.Register.Password = "!QAZxdr5";
+
                 if (linkingAccount)
                 {
                     var result = await _authService.ReadExternalLoginCredential(OwinContext);

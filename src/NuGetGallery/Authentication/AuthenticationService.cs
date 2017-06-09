@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.DirectoryServices.AccountManagement;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -138,8 +139,32 @@ namespace NuGetGallery.Authentication
                 }
 
                 // Validate the password
-                Credential matched;
-                if (!ValidatePasswordCredential(user.Credentials, password, out matched))
+                //Credential matched = null;
+                //if (!ValidatePasswordCredential(user.Credentials, password, out matched))
+                //{
+                //    _trace.Information($"Password validation failed: {userNameOrEmail}");
+
+                //    await UpdateFailedLoginAttempt(user);
+
+                //    await Auditing.SaveAuditRecordAsync(
+                //        new FailedAuthenticatedOperationAuditRecord(
+                //            userNameOrEmail, AuditedAuthenticatedOperationAction.FailedLoginInvalidPassword));
+
+                //    return new PasswordAuthenticationResult(PasswordAuthenticationResult.AuthenticationResult.BadCredentials);
+                //}
+
+                //var passwordCredentials = user
+                //    .Credentials
+                //    .Where(c => CredentialTypes.IsPassword(c.Type))
+                //    .ToList();
+
+                //if (passwordCredentials.Count > 1 ||
+                //    !passwordCredentials.Any(c => string.Equals(c.Type, CredentialBuilder.LatestPasswordType, StringComparison.OrdinalIgnoreCase)))
+                //{
+                //    await MigrateCredentials(user, passwordCredentials, password);
+                //}
+
+                if (!ValidateDomainPassword(user.Credentials, user.Username, password))
                 {
                     _trace.Information($"Password validation failed: {userNameOrEmail}");
 
@@ -152,23 +177,12 @@ namespace NuGetGallery.Authentication
                     return new PasswordAuthenticationResult(PasswordAuthenticationResult.AuthenticationResult.BadCredentials);
                 }
 
-                var passwordCredentials = user
-                    .Credentials
-                    .Where(c => CredentialTypes.IsPassword(c.Type))
-                    .ToList();
-
-                if (passwordCredentials.Count > 1 ||
-                    !passwordCredentials.Any(c => string.Equals(c.Type, CredentialBuilder.LatestPasswordType, StringComparison.OrdinalIgnoreCase)))
-                {
-                    await MigrateCredentials(user, passwordCredentials, password);
-                }
-
                 // Reset failed login count upon successful login
-                await UpdateSuccessfulLoginAttempt(user);
+             await UpdateSuccessfulLoginAttempt(user);
 
                 // Return the result
-                _trace.Verbose("Successfully authenticated '" + user.Username + "' with '" + matched.Type + "' credential");
-                return new PasswordAuthenticationResult(PasswordAuthenticationResult.AuthenticationResult.Success, new AuthenticatedUser(user, matched));
+              //  _trace.Verbose("Successfully authenticated '" + user.Username + "' with '" + matched.Type + "' credential");
+                return new PasswordAuthenticationResult(PasswordAuthenticationResult.AuthenticationResult.Success, new AuthenticatedUser(user, new Credential()));
             }
         }
 
@@ -804,6 +818,17 @@ namespace NuGetGallery.Authentication
         {
             matched = creds.FirstOrDefault(c => _credentialValidator.ValidatePasswordCredential(c, password));
             return matched != null;
+        }
+
+        public virtual bool ValidateDomainPassword(IEnumerable<Credential> creds, string username, string password)
+        {
+            bool valid = false;
+            using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+            {
+                valid = context.ValidateCredentials(username, password);
+            }          
+
+            return valid;
         }
 
         private async Task MigrateCredentials(User user, List<Credential> creds, string password)

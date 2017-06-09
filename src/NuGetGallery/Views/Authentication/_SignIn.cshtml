@@ -26,18 +26,14 @@
             @Html.LabelFor(m => m.SignIn.Password)
             @Html.EditorFor(m => m.SignIn.Password)
             @Html.ValidationMessageFor(m => m.SignIn.Password)
-        </div>
-
-        <p id="signIn-lostpassword">
-            @Html.ActionLink("Lost your Password?", "ForgotPassword", "Users")
-        </p>
+        </div>               
 
         <img src="@Url.Content("~/Content/images/required.png")" alt="Blue border on left means required." />
 
 
         <button id="signin-link" class="btn btn-big" type="submit" title="Sign in with a NuGet.org Account">
             <i class="signin-authprovider-icon nucon-nuget-w"></i>
-            Sign in with a NuGet.org account
+            Sign in
         </button>
     </fieldset>
 }
