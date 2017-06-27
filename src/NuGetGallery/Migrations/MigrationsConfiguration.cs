@@ -10,7 +10,7 @@ namespace NuGetGallery.Migrations
     {
         public MigrationsConfiguration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(EntitiesContext context)
