@@ -205,7 +205,7 @@ namespace NuGetGallery
                 package = packageVersions.SingleOrDefault(
                     p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) &&
                          (
-                            String.Equals(p.NormalizedVersion, NuGetVersionNormalizer.Normalize(version), StringComparison.OrdinalIgnoreCase)
+                            String.Equals(NuGetVersionNormalizer.Normalize(p.NormalizedVersion), NuGetVersionNormalizer.Normalize(version), StringComparison.OrdinalIgnoreCase)
                          ));
             }
             return package;
