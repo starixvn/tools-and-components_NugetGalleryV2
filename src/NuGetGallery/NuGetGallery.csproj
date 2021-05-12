@@ -33,6 +33,7 @@
     <MvcBuildViews Condition=" '$(MvcBuildViews)' == '' ">false</MvcBuildViews>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1741,6 +1742,7 @@
     <Content Include="Views\Pages\Terms.cshtml" />
     <Content Include="Views\Pages\About.cshtml" />
     <Content Include="Views\Users\ApiKeys.cshtml" />
+    <None Include="Web.PRO.config" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CodeAnalysisDictionary.xml" />
